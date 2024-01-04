@@ -1,0 +1,83 @@
+Isaac gym Quadruped robot training framework folder structure.
+
+(1) Resources
+    ---> meshfiles, launch files, urdf
+(2) envs
+    ---> base_config.py
+    ---> base_task.py
+    	 ---> Defines a BaseClass for RL tasks (similar to gym emvironment in a way)
+    	 ---> Stores the information such as device (cpu/gpu), physics engine, whether to rub in headless mode or not, num_envs, num_observations, num_actions
+    	 ---> Inintialises the buffers to store obs, actions, rewards, episode lengths etc.
+    	 ---> Has get_observation, reset, step, render as member functions (just like a typical gym environment)
+    ---> legged_robot_libtraj.py
+         ---> Contains the actual implememtation of all the member functions in BaseTask
+         ---> Integrated with trajectory generator, RL modifies the trajgen params
+    ---> legged_robot_config.py
+         ---> Robot_config
+              ---> env config (num_envs, num_obs, num_actions, episode_length etc)
+              ---> terrain config (type of terrain, friction, grid where heightmap is sampled etc)
+              ---> command config (no of commands, lin and ang vel command ranges)
+              ---> initial state (initial pos, velocities, joint angles)
+              ---> control config (Kp, Kd values, type of control (position, velocity of torque))
+              ---> domain randomisation (friction range to sample from, applying forces, adding mass etc)
+              ---> rewards
+                   ---> scales (weightage of each reward term for calculation total reward at each step)
+              ---> simulation config (dt = 0.005 ---> 200Hz)
+         ---> PPO_config
+              ---> policy (architecture, activation units, initialisation)
+              ---> ppo config (gamma, lambda, learning rate, num_mini_batches, num_epochs, clipping range, max grad norm etc)
+              ---> runner config (experiment name, checkpoints path, saving interval, max_iterations, num_steps_per_env etc)
+    ---> stoch3 config
+         ---> Inherited from Robot_config
+         ---> Has most of the same attributes, but initialised differently.
+(3) utils
+    ---> helper.py (helps in parsing command line arguments)
+    ---> kinematics.py (contains forward, inverse kinematics and jacobian calculation)
+    ---> logger.py (code to log and plot state varibales over time)
+    ---> terrain.py (contains various terrains)
+    ---> trajectory_velocity.py (generates swing leg trajectory)
+(4) scripts
+    ---> train.py (to train the policy)
+    ---> play.py (to deploy the policy)
+
+
+Some values to note:
+ (1) config.simulation.dt = 0.005
+     config.control.decimation = 4 --> Low level control frequency = 200 Hz
+     env.dt = 0.005 x 4 = 0.02 ---> High-level control frequency = 50 Hz
+ (2) If terrain.mesh_type = 'plain', then terrain.curriculum = False
+ (3) terrain.measure_heights = False
+ (4) config.env.max_episode_length_s = 20 sec --> config.env.max_episode_length = 20/0.02 = 1000
+ (5) _init_buffers()
+     (a) actor_root_states --> does it mean [lin_pos, quaternion, lin_vel, ang_vel]
+                               in world-frame?
+     (b) dof_state_tensor --> num_envs x num_dofs x 2
+         dof_pos = dof_state_tensor[:, :, 0]
+         dof_vel = dof_state_tensor[:, :, 1]
+     (c) net_contact_forces --> num_envs x num_bodies x 3
+         Should the foot contact be determined based on the contact forces on each of the foot?
+ (6) For force/torque control, must cfg.asset.default_dof_drive_mode = 3?
+
+ Unitree Go1 Specifications:
+    (1) base = 5.204, hip = 0.591, hip_rotor = 0.089, thigh = 0.92, thigh_rotor = 0.089,
+        calf = 0.135, calf_rotor = 0.089, foot = 0.06, leg_mass =  1.973
+        total_mass = base_mass + 4 * leg_mass = 13.096 (12 kg ignoring small masses)
+    (2) self._abadLinkLength = 0.08
+        self._hipLinkLength = 0.213
+        self._kneeLinkLength = 0.213
+        self._kneeLinkY_offset = 0.0
+        self._abadLocation = np.array([0.1881, 0.04675, 0], dtype=DTYPE).reshape((3,1))
+        self._bodyMass = 5.204 * 2
+        self._bodyInertia = np.array([0.0168128557, 0, 0,
+                                  0, 0.063009565, 0,
+                                  0, 0, 0.0716547275]) * 5
+        self._bodyHeight = 0.26
+
+ Force control framework:
+    (1) asset_options.default_dof_drive_mode = gymapi.DOF_MODE_NONE
+    (2) for each dof i, set
+            dof_props['driveMode'][i] = gymapi.DOF_MODE_EFFORT
+            dof_props['stiffness'][i] = 0.0
+            dof_props['damping'][i] = 0.0
+    (3)
+

@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <xacro:macro name="robot_foot" params="leg">
+
+    <link name="${leg}_foot_link" />
+
+    <joint name="${leg}_ankle_joint" type="fixed">
+      <parent link="${leg}_shank_link"/>
+      <child link="${leg}_foot_link"/>
+      <origin xyz="0 0 -0.3" rpy="0 0 0" />
+    </joint>
+
+    </xacro:macro>
+
+</robot>

@@ -1,0 +1,25 @@
+1. Robot is not falling, but not able to follow commands and there seems to be a lot of jitter in swing leg.
+   setting: 
+	   num outputs - 12 (GRFs) in range of [-1, 1]
+	   action scale: 30, 30, 60 (F_x, F_y, F_z)
+	   GRFs = outputs * action_scale
+	   GRFs_z += mg/(num_legs_in_stance)
+2. To run everything on cpu use the following flags: --pipeline=cpu --rl_devide=cpu --sim_device=cpu
+   (This seems to make some elements in observation as NaNs. Find out why.)
+3. Make the z-direction forces from the policy always negative, since foot has to apply the force on the ground
+   and, it is opposite in direction to positive z-axis.
+4. Kp and Kd joint values of 20.0 and 1.0 seems to be good enough in case of MPC, i.e. same should be
+   good enough for RL case as well assuming that the forces are good.
+5. Should the decimation be 1? Is that good enough for force control like in MPC?
+
+Exp1:
+    1. decimation = 4, num_actions = 12 (direct grfs)
+    2. tau_ff = J^T. f
+    3. Kp = 20.0, Kd = 1.0
+
+Exp2:
+    1. Decimation = 1
+    2. num_actions = 6, distribute wrench
+    3. tau_ff = -J^T. F
+    4. Kp = 20.0, kd = 1.0
+

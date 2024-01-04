@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<robot name = 'stoch3' xmlns:xacro = 'http://www.ros.org/wiki/xacro'>
+
+  <xacro:include filename="$(find stoch3_description)/urdf/stoch3.description.xacro" />
+  <xacro:include filename="$(find stoch3_description)/urdf/transmission.xacro" />
+  <xacro:include filename="$(find stoch3_description)/urdf/gazebo.xacro" />
+  <xacro:include filename="$(find stoch3_description)/urdf/materials.xacro" />
+  <xacro:include filename="$(find stoch3_description)/urdf/sensors.xacro" />
+  <xacro:include filename="$(find stoch3_description)/urdf/foot.xacro" />
+
+
+  <!-- For defining the links and joints-->
+  <xacro:stoch3_description fixed="false"/>
+  <xacro:robot_foot leg="fl" />
+  <xacro:robot_foot leg="fr" />
+  <xacro:robot_foot leg="bl" />
+  <xacro:robot_foot leg="br" />
+
+  <!-- For hardware interface and ros control-->
+  <xacro:robot_transmission name="fl_abd"/>
+  <xacro:robot_transmission name="fl_hip"/>
+  <xacro:robot_transmission name="fl_knee"/>
+
+  <xacro:robot_transmission name="bl_abd"/>
+  <xacro:robot_transmission name="bl_hip"/>
+  <xacro:robot_transmission name="bl_knee"/>
+
+  <xacro:robot_transmission name="fr_abd"/>
+  <xacro:robot_transmission name="fr_hip"/>
+  <xacro:robot_transmission name="fr_knee"/>
+
+  <xacro:robot_transmission name="br_abd"/>
+  <xacro:robot_transmission name="br_hip"/>
+  <xacro:robot_transmission name="br_knee"/>
+
+  <!-- Materials and friction properties-->
+  <xacro:materials name="base_link" color="White"/>
+
+  <xacro:materials name="fl_abd" color="Grey"/>
+  <xacro:materials name="bl_abd" color="Grey"/>
+  <xacro:materials name="fr_abd" color="Grey"/>
+  <xacro:materials name="br_abd" color="Grey"/>
+
+  <xacro:materials name="fl_thigh" color="DarkGrey"/>
+  <xacro:materials name="bl_thigh" color="DarkGrey"/>
+  <xacro:materials name="fr_thigh" color="DarkGrey"/>
+  <xacro:materials name="br_thigh" color="DarkGrey"/>
+
+  <xacro:materials name="fl_shank" color="Grey"/>
+  <xacro:materials name="bl_shank" color="Grey"/>
+  <xacro:materials name="fr_shank" color="Grey"/>
+  <xacro:materials name="br_shank" color="Grey"/>
+
+  <!-- For miscellaneous gazebo properties like ros-control etc. -->   
+  <xacro:gazebo_plugin namespace="stoch3" />
+
+  <!-- For sensors-->
+  <xacro:imu id="1" x="0.0" y="0.0" z="0.005" roll="0.0" pitch="0.0" yaw="0.0" update_rate="100" gnoise="0.005"/>
+</robot>

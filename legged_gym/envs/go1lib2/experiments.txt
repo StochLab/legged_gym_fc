@@ -1,0 +1,4 @@
+Exp1: Trained on flat terrain , clip_action = 0.2
+Exp2: Trained on flat terrain , clip_action = 0.1
+Exp3: Trained on slopes and rough terrain , clip_action = 0.1
+Exp4: Trained on slopes and rough terrain , clip_action = 0.2

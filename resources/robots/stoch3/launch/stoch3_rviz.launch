@@ -1,0 +1,33 @@
+<launch>
+ 
+  <arg name="joint_state_control_gui" default="true"/>
+  <arg name="fixed_base" default="true" />
+
+  <param if="$(arg fixed_base)"
+    name="robot_description"
+    command="$(find xacro)/xacro --inorder '$(find stoch3_description)/urdf/stoch3_fixed.urdf'" />
+
+  <param unless="$(arg fixed_base)"
+    name="robot_description"
+    command="$(find xacro)/xacro --inorder '$(find stoch3_description)/urdf/stoch3.urdf'" />
+  
+  <!-- send fake joint values -->
+  <node if="$(arg joint_state_control_gui)"
+       name="joint_state_publisher_gui" pkg="joint_state_publisher_gui" type="joint_state_publisher_gui"/>
+  
+  <!-- Combine joint values -->
+  <node if="$(arg joint_state_control_gui)" 
+    name="robot_state_publisher" 
+    pkg="robot_state_publisher" 
+    type="robot_state_publisher"/>
+  
+  <node unless="$(arg joint_state_control_gui)"
+    ns="stoch3" 
+    name="robot_state_publisher" 
+    pkg="robot_state_publisher" 
+    type="robot_state_publisher"/>
+  
+  <!-- Show in Rviz   -->
+  <node name="rviz" pkg="rviz" type="rviz" args="-d $(find stoch3_description)/launch/stoch3.rviz"/>
+
+</launch>

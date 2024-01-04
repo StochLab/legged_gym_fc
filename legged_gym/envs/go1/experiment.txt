@@ -1,0 +1,13 @@
+1) Changing damping friction torque limit does not produce any improvement.
+2) Foot joint is fixed and therefore was not loaded. Including it works.
+3) Including foot fixed joint and removing fixed rotor joints works the best.
+
+List of Experiments:
+
+Exp8: Trained on stairs with high steps: Robot didn't learn to raise its legs.
+Exp9: Increasing feet air time coeff: In forward motion for some bots knee is touching the ground.
+Exp10: Penalty on calf contact removed, feet stumble penalty increased: front leg knees are bent more than rear leg knees, IRL bot is vibrating.
+Exp11: Exp10 + action rate penalty increased: front leg knees are bent more than rear leg knees, IRL bot is vibrating.
+Note: Action rate penalty =-0.1 : agent not learning at all 
+Exp12: orientation penalty = -0.1 : Front knee is no longer bending
+Exp13: Exp12 + front thigh = 0.5 + rear thigh = 0.8 : 

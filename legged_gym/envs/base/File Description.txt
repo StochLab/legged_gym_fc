@@ -1,0 +1,3 @@
+legged_robot: Hardcoded swing trajectory
+legged_robot_libtraj: libtraj generating trajectory and RL predicting angle perturbation
+legged_robot_libtraj_2: libtraj generating trajectory and RL predicting angle perturbation, changing foot offset, and frequency

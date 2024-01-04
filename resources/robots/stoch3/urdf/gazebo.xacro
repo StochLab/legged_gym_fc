@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+    <xacro:macro name="gazebo_plugin" params="namespace">
+
+        <!-- Enable the Joint Control -->
+        <gazebo>
+            <plugin filename="libgazebo_ros_control.so" name="gazebo_ros_control">
+            <legacyModeNS>true</legacyModeNS>
+            <robotNamespace>${namespace}</robotNamespace>
+            <robotSimType>stoch3_gazebo/Stoch3RobotHWSim</robotSimType>
+          </plugin>
+        </gazebo>
+ 
+        <gazebo>
+            <self_collide>1</self_collide>
+        </gazebo>
+        <!--
+        <gazebo>
+            <plugin filename="libgazebo_ros_p3d.so" name="p3d_base_controller">
+                <alwaysOn>true</alwaysOn>
+                <updateRate>10.0</updateRate>
+                <bodyName>base_link</bodyName>
+                <topicName>odom/ground_truth</topicName>
+                <gaussianNoise>0.01</gaussianNoise>
+                <frameName>world</frameName>
+                <xyzOffsets>0 0 0</xyzOffsets>
+                <rpyOffsets>0 0 0</rpyOffsets>
+            </plugin>
+        </gazebo>
+        -->
+    </xacro:macro>
+
+</robot>
