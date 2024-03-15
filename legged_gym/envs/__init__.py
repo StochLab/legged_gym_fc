@@ -30,35 +30,43 @@
 
 from legged_gym import LEGGED_GYM_ROOT_DIR, LEGGED_GYM_ENVS_DIR
 from .base.legged_robot import LeggedRobot
-from .stoch3lib.legged_robot_libtraj import LeggedRobotLibTraj
-from .stoch3_force_control.legged_robot_libtraj import LeggedRobotLibTrajFC
-from .go1.go1_libtraj_fc import Go1LibTrajFC
-from .go1_fc.go1_libtraj_fc import Go1LibTraj
-from .go1_basic_fc.go1_libtraj_fc import Go1BasicLibTraj
-from .go1_basic2.go1_libtraj_fc import Go1BasicLibTraj2
-from .go1lib2.legged_robot_libtraj import LeggedRobotGo1LibTraj2
-from .go1_fc_new.go1_libtraj_fc import Go1NewLibTraj
 
-from .go1.go1_config import GO1RoughCfg, GO1RoughCfgPPO
-from .go1_fc.go1_config import GO1Cfg, GO1CfgPPO
-from .go1_basic_fc.go1_config import GO1BasicCfg, GO1BasicCfgPPO
-from .go1_basic2.go1_config import GO1BasicCfg2, GO1BasicCfg2PPO
+from .go1_wrench1.go1_libtraj_fc import Go1Wrench1LibTraj
+from .go1_wrench2.go1_libtraj_fc import Go1Wrench2LibTraj
+from .go1_wrench3.go1_libtraj_fc import Go1Wrench3LibTraj
+from .go1_wrench4.go1_libtraj_fc import Go1Wrench4LibTraj
+from .go1_wrench5.go1_libtraj_fc import Go1Wrench5LibTraj
+from .go1_wrench6.go1_libtraj_fc import Go1Wrench6LibTraj
+from .go1_wrench7.go1_libtraj_fc import Go1Wrench7LibTraj
+from .go1_wrench8.go1_libtraj_fc import Go1Wrench8LibTraj
+from .go1_wrench9.go1_libtraj_fc import Go1Wrench9LibTraj
+
+from .go1_grf1.go1_libtraj_fc import Go1grf1LibTraj
+
+from .go1_wrench1.go1_config import GO1Wrench1Cfg, GO1Wrench1CfgPPO
+from .go1_wrench2.go1_config import GO1Wrench2Cfg, GO1Wrench2CfgPPO
+from .go1_wrench3.go1_config import GO1Wrench3Cfg, GO1Wrench3CfgPPO
+from .go1_wrench4.go1_config import GO1Wrench4Cfg, GO1Wrench4CfgPPO
+from .go1_wrench5.go1_config import GO1Wrench5Cfg, GO1Wrench5CfgPPO
+from .go1_wrench6.go1_config import GO1Wrench6Cfg, GO1Wrench6CfgPPO
+from .go1_wrench7.go1_config import GO1Wrench7Cfg, GO1Wrench7CfgPPO
+from .go1_wrench8.go1_config import GO1Wrench8Cfg, GO1Wrench8CfgPPO
+from .go1_wrench9.go1_config import GO1Wrench9Cfg, GO1Wrench9CfgPPO
+
+from .go1_grf1.go1_config import GO1grf1Cfg, GO1grf1CfgPPO
+
 from .go1_fc_new.go1_config import GO1NewCfg, GO1NewCfgPPO
-from .stoch3lib.stoch3lib_config import STOCH3LIBRoughCfg, STOCH3LIBRoughCfgPPO
-from .stoch3_force_control.stoch3_fc_config import STOCH3ForceControlCfg, STOCH3ForceControlCfgPPO
-from .go1lib2.go1lib2_config import GO1LIB2RoughCfg, GO1LIB2RoughCfgPPO
-
 from legged_gym.utils.task_registry import task_registry
+from legged_gym.utils.task_registry_bc import task_registry_bc
 
+task_registry.register("go1_wrench1", Go1Wrench1LibTraj, GO1Wrench1Cfg(), GO1Wrench1CfgPPO())
+task_registry.register("go1_wrench2", Go1Wrench2LibTraj, GO1Wrench2Cfg(), GO1Wrench2CfgPPO())
+task_registry.register("go1_wrench3", Go1Wrench3LibTraj, GO1Wrench3Cfg(), GO1Wrench3CfgPPO())
+task_registry.register("go1_wrench4", Go1Wrench4LibTraj, GO1Wrench4Cfg(), GO1Wrench4CfgPPO())
+task_registry.register("go1_wrench5", Go1Wrench5LibTraj, GO1Wrench5Cfg(), GO1Wrench5CfgPPO())
+task_registry.register("go1_wrench6", Go1Wrench6LibTraj, GO1Wrench6Cfg(), GO1Wrench6CfgPPO())
+task_registry.register("go1_wrench7", Go1Wrench7LibTraj, GO1Wrench7Cfg(), GO1Wrench7CfgPPO())
+task_registry.register("go1_wrench8", Go1Wrench8LibTraj, GO1Wrench8Cfg(), GO1Wrench8CfgPPO())
+task_registry.register("go1_wrench9", Go1Wrench9LibTraj, GO1Wrench9Cfg(), GO1Wrench9CfgPPO())
 
-task_registry.register("go1", Go1LibTrajFC, GO1RoughCfg(),
-                       GO1RoughCfgPPO())
-task_registry.register("go1_fc", Go1LibTraj, GO1Cfg(), GO1CfgPPO())
-task_registry.register("go1_basic", Go1BasicLibTraj, GO1BasicCfg(), GO1BasicCfgPPO())
-task_registry.register("go1_fc_new", Go1NewLibTraj, GO1NewCfg(), GO1NewCfgPPO())
-task_registry.register("go1_basic2", Go1BasicLibTraj2, GO1BasicCfg2(), GO1BasicCfg2PPO())
-task_registry.register("stoch3lib", LeggedRobotLibTraj, STOCH3LIBRoughCfg(),
-                       STOCH3LIBRoughCfgPPO())
-task_registry.register("stoch3_fc", LeggedRobotLibTrajFC, STOCH3ForceControlCfg(),
-                       STOCH3ForceControlCfgPPO())
-task_registry.register("go1lib2", LeggedRobotGo1LibTraj2, GO1LIB2RoughCfg(), GO1LIB2RoughCfgPPO() )
+task_registry.register("go1_grf1", Go1grf1LibTraj, GO1grf1Cfg(), GO1grf1CfgPPO())

@@ -1,0 +1,305 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<robot xmlns:xacro="http://wiki.ros.org/xacro">
+
+  <ros2_control name="BaghiraSystemInterface" type="system">
+    <hardware>
+      <plugin>baghira_hardware_interface/BaghiraHardwareInterface</plugin>
+      <!-- <param name="serial_port">/dev/ttyACM0</param> -->
+      <!-- <param>$(find baghira_hardware_interface)/config/motor_offsets.yaml</param>
+      <param>$(find baghira_hardware_interface)/config/motor_gain_scale.yaml</param>
+      <param>$(find baghira_hardware_interface)/config/joint_to_motor_map.yaml</param>
+      <param>$(find baghira_hardware_interface)/config/joint_motor_id_map.yaml</param>
+      <param>$(find baghira_hardware_interface)/config/joint_limits.yaml</param>
+      <param>$(find baghira_hardware_interface)/config/joint_bus_id_map.yaml</param> -->
+
+    </hardware>
+
+    <!-- Front Left -->
+    <joint name="fl_abd_joint">
+      <command_interface name="position" />
+      <command_interface name="effort" />
+      <command_interface name="velocity" />
+      <command_interface name="kp" />
+      <command_interface name="kd" />
+
+      <state_interface name="position" />
+      <state_interface name="effort" />
+      <state_interface name="velocity" />
+      <state_interface name="mode" />
+      <state_interface name="fault" />
+      <state_interface name="voltage" />
+      <state_interface name="temperature" />
+
+      <param name="min">-1.5708</param>
+      <param name="max">1.5708</param>
+      <param name="type">revolute</param>
+      <param name="max_effort">30</param>
+
+    </joint>
+
+    <joint name="fl_hip_joint">
+      <command_interface name="position" />
+      <command_interface name="effort" />
+      <command_interface name="velocity" />
+      <command_interface name="kp" />
+      <command_interface name="kd" />
+
+      <state_interface name="position" />
+      <state_interface name="effort" />
+      <state_interface name="velocity" />
+      <state_interface name="mode" />
+      <state_interface name="fault" />
+      <state_interface name="voltage" />
+      <state_interface name="temperature" />
+
+      <param name="min">-1.5708</param>
+      <param name="max">3.14159</param>
+      <param name="type">revolute</param>
+      <param name="max_effort">30</param>
+
+    </joint>
+
+        <joint name="fl_knee_joint">
+      <command_interface name="position" />
+      <command_interface name="effort" />
+      <command_interface name="velocity" />
+      <command_interface name="kp" />
+      <command_interface name="kd" />
+
+      <state_interface name="position" />
+      <state_interface name="effort" />
+      <state_interface name="velocity" />
+      <state_interface name="mode" />
+      <state_interface name="fault" />
+      <state_interface name="voltage" />
+      <state_interface name="temperature" />
+
+      <param name="min">-3.14159</param>
+      <param name="max">0</param>
+      <param name="type">revolute</param>
+      <param name="max_effort">30</param>
+
+    </joint>
+
+    <!-- Front Right -->
+
+    <joint name="fr_abd_joint">
+      <command_interface name="position" />
+      <command_interface name="effort" />
+      <command_interface name="velocity" />
+      <command_interface name="kp" />
+      <command_interface name="kd" />
+
+      <state_interface name="position" />
+      <state_interface name="effort" />
+      <state_interface name="velocity" />
+      <state_interface name="mode" />
+      <state_interface name="fault" />
+      <state_interface name="voltage" />
+      <state_interface name="temperature" />
+
+      <param name="min">-1.5708</param>
+      <param name="max">1.5708</param>
+      <param name="type">revolute</param>
+      <param name="max_effort">30</param>
+
+    </joint>
+        <joint name="fr_hip_joint">
+      <command_interface name="position" />
+      <command_interface name="effort" />
+      <command_interface name="velocity" />
+      <command_interface name="kp" />
+      <command_interface name="kd" />
+
+      <state_interface name="position" />
+      <state_interface name="effort" />
+      <state_interface name="velocity" />
+      <state_interface name="mode" />
+      <state_interface name="fault" />
+      <state_interface name="voltage" />
+      <state_interface name="temperature" />
+
+      <param name="min">-1.5708</param>
+      <param name="max">3.14159</param>
+      <param name="type">revolute</param>
+      <param name="max_effort">30</param>
+
+    </joint>
+
+        <joint name="fr_knee_joint">
+      <command_interface name="position" />
+      <command_interface name="effort" />
+      <command_interface name="velocity" />
+      <command_interface name="kp" />
+      <command_interface name="kd" />
+
+      <state_interface name="position" />
+      <state_interface name="effort" />
+      <state_interface name="velocity" />
+      <state_interface name="mode" />
+      <state_interface name="fault" />
+      <state_interface name="voltage" />
+      <state_interface name="temperature" />
+
+      <param name="min">-3.14159</param>
+      <param name="max">0</param>
+      <param name="type">revolute</param>
+      <param name="max_effort">30</param>
+
+    </joint>
+
+    <!-- Back Left -->
+
+    <joint name="bl_abd_joint">
+      <command_interface name="position" />
+      <command_interface name="effort" />
+      <command_interface name="velocity" />
+      <command_interface name="kp" />
+      <command_interface name="kd" />
+
+      <state_interface name="position" />
+      <state_interface name="effort" />
+      <state_interface name="velocity" />
+      <state_interface name="mode" />
+      <state_interface name="fault" />
+      <state_interface name="voltage" />
+      <state_interface name="temperature" />
+
+      <param name="min">-1.5708</param>
+      <param name="max">1.5708</param>
+      <param name="type">revolute</param>
+      <param name="max_effort">30</param>
+
+    </joint>
+        <joint name="bl_hip_joint">
+      <command_interface name="position" />
+      <command_interface name="effort" />
+      <command_interface name="velocity" />
+      <command_interface name="kp" />
+      <command_interface name="kd" />
+
+      <state_interface name="position" />
+      <state_interface name="effort" />
+      <state_interface name="velocity" />
+      <state_interface name="mode" />
+      <state_interface name="fault" />
+      <state_interface name="voltage" />
+      <state_interface name="temperature" />
+
+      <param name="min">-1.5708</param>
+      <param name="max">3.14159</param>
+      <param name="type">revolute</param>
+      <param name="max_effort">30</param>
+
+    </joint>
+
+        <joint name="bl_knee_joint">
+      <command_interface name="position" />
+      <command_interface name="effort" />
+      <command_interface name="velocity" />
+      <command_interface name="kp" />
+      <command_interface name="kd" />
+
+      <state_interface name="position" />
+      <state_interface name="effort" />
+      <state_interface name="velocity" />
+      <state_interface name="mode" />
+      <state_interface name="fault" />
+      <state_interface name="voltage" />
+      <state_interface name="temperature" />
+
+      <param name="min">-3.14159</param>
+      <param name="max">0</param>
+      <param name="type">revolute</param>
+      <param name="max_effort">30</param>
+
+    </joint>
+
+    <!-- Back Right -->
+
+    <joint name="br_abd_joint">
+      <command_interface name="position" />
+      <command_interface name="effort" />
+      <command_interface name="velocity" />
+      <command_interface name="kp" />
+      <command_interface name="kd" />
+
+      <state_interface name="position" />
+      <state_interface name="effort" />
+      <state_interface name="velocity" />
+      <state_interface name="mode" />
+      <state_interface name="fault" />
+      <state_interface name="voltage" />
+      <state_interface name="temperature" />
+
+      <param name="min">-1.5708</param>
+      <param name="max">1.5708</param>
+      <param name="type">revolute</param>
+      <param name="max_effort">30</param>
+
+    </joint>
+      <joint name="br_hip_joint">
+      <command_interface name="position" />
+      <command_interface name="effort" />
+      <command_interface name="velocity" />
+      <command_interface name="kp" />
+      <command_interface name="kd" />
+
+      <state_interface name="position" />
+      <state_interface name="effort" />
+      <state_interface name="velocity" />
+      <state_interface name="mode" />
+      <state_interface name="fault" />
+      <state_interface name="voltage" />
+      <state_interface name="temperature" />
+
+      <param name="min">-1.5708</param>
+      <param name="max">3.14159</param>
+      <param name="type">revolute</param>
+      <param name="max_effort">30</param>
+
+    </joint>
+
+        <joint name="br_knee_joint">
+      <command_interface name="position" />
+      <command_interface name="effort" />
+      <command_interface name="velocity" />
+      <command_interface name="kp" />
+      <command_interface name="kd" />
+
+      <state_interface name="position" />
+      <state_interface name="effort" />
+      <state_interface name="velocity" />
+      <state_interface name="mode" />
+      <state_interface name="fault" />
+      <state_interface name="voltage" />
+      <state_interface name="temperature" />
+
+      <param name="min">-3.14159</param>
+      <param name="max">0</param>
+      <param name="type">revolute</param>
+      <param name="max_effort">30</param>
+
+    </joint>
+  </ros2_control>
+
+<!-- <ros2_control name="BaghiraIMUInterface" type="sensor">
+  <hardware>
+    <plugin>imu_interface/IMUInterface</plugin>
+  </hardware>
+
+  <sensor name="imu">
+    <state_interface name="orientation.x"/>
+    <state_interface name="orientation.y"/>
+    <state_interface name="orientation.z"/>
+    <state_interface name="orientation.w"/>
+    <state_interface name="angular_velocity.x"/>
+    <state_interface name="angular_velocity.y"/>
+    <state_interface name="angular_velocity.z"/>
+    <state_interface name="linear_velocity.x"/>
+    <state_interface name="linear_velocity.y"/>
+    <state_interface name="linear_velocity.z"/>
+  </sensor>
+</ros2_control> -->
+
+</robot>

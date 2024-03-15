@@ -76,7 +76,6 @@ def distribute_wrench(foot_pos: torch.Tensor, foot_contacts: torch.Tensor,
                                wrench: torch.Tensor, mu: float = 0.8) -> torch.Tensor:
     batch_size = wrench.shape[0]
     device = foot_contacts.device
-    device = foot_contacts.device
     foot_pos_np = foot_pos.cpu().numpy()
     foot_contacts_np = foot_contacts.cpu().numpy()
     wrench_np = wrench.cpu().numpy()
@@ -86,7 +85,7 @@ def distribute_wrench(foot_pos: torch.Tensor, foot_contacts: torch.Tensor,
         torch.multiprocessing.set_start_method('spawn', force=True)
 
     # Create a pool of workers
-    num_workers = 2
+    num_workers = 64
     pool = Pool(num_workers)
 
     # Prepare arguments for parallel processing

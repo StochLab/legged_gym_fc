@@ -30,10 +30,11 @@
 
 from legged_gym import LEGGED_GYM_ROOT_DIR
 import os
+from ml_logger import logger as LOGGER
 
 import isaacgym
 from legged_gym.envs import *
-from legged_gym.utils import  get_args, export_policy_as_jit, task_registry, Logger
+from legged_gym.utils import get_args, export_policy_as_jit, task_registry, Logger, class_to_dict
 from legged_gym.utils.helpers import update_class_from_dict 
 
 import numpy as np
@@ -59,11 +60,11 @@ def play(args):
         print("Default Configuration loaded")
     # print("cfg type",type(env_cfg))
     # print("Check:",env_cfg.rewards.scales.step_height)
-    env_cfg.env.num_envs = min(env_cfg.env.num_envs, 50)
+    env_cfg.env.num_envs = min(env_cfg.env.num_envs, 1)
     train_cfg.policy.latent = False
     # env_cfg.asset.default_dof_drive_mode = 1
     # env_cfg.env.num_envs = min(env_cfg.env.num_envs, 50)
-    env_cfg.terrain.mesh_type='plane'
+    env_cfg.terrain.mesh_type = 'plane' # 'trimesh', 'plane'
     env_cfg.env.evaluation = True
     env_cfg.terrain.num_rows = 5
     env_cfg.terrain.num_cols = 5
@@ -78,8 +79,8 @@ def play(args):
     obs = env.get_observations()
     # load policy
     train_cfg.runner.resume = True
-    ppo_runner, train_cfg = task_registry.make_alg_runner(env=env, name=args.task, args=args, train_cfg=train_cfg)
-    #print("step1")
+    ppo_runner, train_cfg = task_registry.make_alg_runner(env=env, name=args.task,
+                                                          args=args, train_cfg=train_cfg)
     policy = ppo_runner.get_inference_policy(device=env.device)
     #print("policy", ppo_runner.alg.actor_critic.actor)
     #torch.save(ppo_runner.alg.actor_critic.actor,"./policy.pth")
@@ -90,20 +91,21 @@ def play(args):
         export_policy_as_jit(ppo_runner.alg.actor_critic, path)
         print('Exported policy as jit script to: ', path)
 
+    LOGGER.log_params(Cfg=class_to_dict(env_cfg))
     logger = Logger(env.dt)
     robot_index = 0 # which robot is used for logging
     joint_index = 1 # which joint is used for logging
-    stop_state_log = 100#100 # number of steps before plotting states
+    stop_state_log = 500  #100 # number of steps before plotting states
     stop_rew_log = env.max_episode_length + 1 # number of steps before print average episode rewards
     camera_position = np.array(env_cfg.viewer.pos, dtype=np.float64)
     camera_vel = np.array([1., 1., 0.])
     camera_direction = np.array(env_cfg.viewer.lookat) - np.array(env_cfg.viewer.pos)
     img_idx = 0
 
-    for i in range(10*int(env.max_episode_length)):
+    for i in range(10 * int(env.max_episode_length)):
         actions = policy(obs.detach())
         obs, _, rews, dones, infos = env.step(actions.detach())
-        obs[:,13:16] = torch.tensor(env_cfg.env.num_envs*[[0.,0.,0.5]],dtype=torch.float32)
+        obs[:, 13:16] = torch.tensor(env_cfg.env.num_envs*[[1.0, 0.0, 0.]],dtype=torch.float32)
         if RECORD_FRAMES:
             if i % 2:
                 filename = os.path.join(LEGGED_GYM_ROOT_DIR, 'logs', train_cfg.runner.experiment_name, 'exported', 'frames', f"{img_idx}.png")
@@ -113,38 +115,38 @@ def play(args):
             camera_position += camera_vel * env.dt
             env.set_camera(camera_position, camera_position + camera_direction)
 
-        # if i < stop_state_log:
-            # logger.log_states(
-            #     {
-            #         'dof_pos_target': actions[robot_index, joint_index].item() * env.cfg.control.action_scale,
-            #         'dof_pos': env.dof_pos[robot_index, joint_index].item(),
-            #         'dof_vel': env.dof_vel[robot_index, joint_index].item(),
-            #         'dof_torque': env.torques[robot_index, joint_index].item(),
-            #         'command_x': env.commands[robot_index, 0].item(),
-            #         'command_y': env.commands[robot_index, 1].item(),
-            #         'command_yaw': env.commands[robot_index, 2].item(),
-            #         'base_vel_x': env.base_lin_vel[robot_index, 0].item(),
-            #         'base_vel_y': env.base_lin_vel[robot_index, 1].item(),
-            #         'base_vel_z': env.base_lin_vel[robot_index, 2].item(),
-            #         'base_vel_yaw': env.base_ang_vel[robot_index, 2].item(),
-            #         'contact_forces_z': env.contact_forces[robot_index, env.feet_indices, 2].cpu().numpy()
-            #     }
-            # )
+        if i < stop_state_log:
+            logger.log_states(
+                {
+                    # 'dof_pos_target': actions[robot_index, joint_index].item() * env.cfg.control.action_scale,
+                    # 'dof_pos': env.dof_pos[robot_index, joint_index].item(),
+                    # 'dof_vel': env.dof_vel[robot_index, joint_index].item(),
+                    # 'dof_torque': env.torques[robot_index, joint_index].item(),
+                    'command_x': 1.0, #env.commands[robot_index, 0].item(),
+                    'command_y': 0.0, #env.commands[robot_index, 1].item(),
+                    'command_yaw': 0.0, #env.commands[robot_index, 2].item(),
+                    'base_vel_x': env.base_lin_vel[robot_index, 0].item(),
+                    'base_vel_y': env.base_lin_vel[robot_index, 1].item(),
+                    'base_vel_z': env.base_lin_vel[robot_index, 2].item(),
+                    'base_vel_yaw': env.base_ang_vel[robot_index, 2].item(),
+                    'contact_forces_z': env.contact_forces[robot_index, env.feet_indices, 2].cpu().numpy()
+                }
+            )
 
             # logger.log_states(
             #     {
-            #         'BL_x': env.foot_position[0,0].item(),
-            #         'BR_x': env.foot_position[0,3].item(),
-            #         'FL_x': env.foot_position[0,6].item(),
-            #         'FR_x': env.foot_position[0,9].item(),
-            #         'BL_y': env.foot_position[0,1].item(),
-            #         'BR_y': env.foot_position[0,4].item(),
-            #         'FL_y': env.foot_position[0,7].item(),
-            #         'FR_y': env.foot_position[0,10].item(),
-            #         'BL_z': env.foot_position[0,2].item(),
-            #         'BR_z': env.foot_position[0,5].item(),
-            #         'FL_z': env.foot_position[0,8].item(),
-            #         'FR_z': env.foot_position[0,11].item()
+            #         'FL_x': env.foot_location[robot_index, 0, 0].item(),
+            #         'FL_y': env.foot_location[robot_index, 0, 1].item(),
+            #         'FL_z': env.foot_location[robot_index, 0, 2].item(),
+            #         'FR_x': env.foot_location[robot_index, 1, 0].item(),
+            #         'FR_y': env.foot_location[robot_index, 1, 1].item(),
+            #         'FR_z': env.foot_location[robot_index, 1, 2].item(),
+            #         'BL_x': env.foot_location[robot_index, 2, 0].item(),
+            #         'BL_y': env.foot_location[robot_index, 2, 1].item(),
+            #         'BL_z': env.foot_location[robot_index, 2, 2].item(),
+            #         'BR_x': env.foot_location[robot_index, 3, 0].item(),
+            #         'BR_y': env.foot_location[robot_index, 3, 1].item(),
+            #         'BR_z': env.foot_location[robot_index, 3, 2].item(),
             #     }
             # )
 
@@ -166,8 +168,8 @@ def play(args):
             # )
 
         elif i==stop_state_log:
-            # logger.plot_states()
-            # logger.plot_new_states()
+            logger.plot_states()
+            logger.plot_new_states()
             print("Logger called")
         if  0 < i < stop_rew_log:
             if infos["episode"]:

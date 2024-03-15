@@ -127,6 +127,30 @@ def get_load_path(root, load_run=-1, checkpoint=-1):
     load_path = os.path.join(load_run, model)
     return load_path
 
+def get_load_path_velocity_model(root, load_run=-1, checkpoint=-1):
+    try:
+        runs = os.listdir(root)
+        #TODO sort by date to handle change of month
+        runs.sort()
+        if 'exported' in runs: runs.remove('exported')
+        last_run = os.path.join(root, runs[-1])
+    except:
+        raise ValueError("No runs in this directory: " + root)
+    if load_run==-1:
+        load_run = os.path_join(last_run, "velocity")
+    else:
+        load_run = os.path.join(root, load_run, "velocity")
+
+    if checkpoint==-1:
+        models = [file for file in os.listdir(load_run) if 'model' in file]
+        models.sort(key=lambda m: '{0:0>15}'.format(m))
+        model = models[-1]
+    else:
+        model = "velocity_model_{}.pt".format(checkpoint)
+
+    load_path = os.path.join(load_run, model)
+    return load_path
+
 def update_cfg_from_args(env_cfg, cfg_train, args):
     # seed
     if env_cfg is not None:
@@ -155,6 +179,7 @@ def update_cfg_from_args(env_cfg, cfg_train, args):
 def get_args():
     custom_parameters = [
         {"name": "--task", "type": str, "default": "anymal_c_flat", "help": "Resume training or start testing from a checkpoint. Overrides config file if provided."},
+        {"name": "--rl_algo", "type": str, "default": "original", "help": "Select the RL algorithm"},
         {"name": "--resume", "action": "store_true", "default": False,  "help": "Resume training from a checkpoint"},
         {"name": "--experiment_name", "type": str,  "help": "Name of the experiment to run or load. Overrides config file if provided."},
         {"name": "--run_name", "type": str,  "help": "Name of the run. Overrides config file if provided."},
@@ -192,6 +217,12 @@ def export_policy_as_jit(actor_critic, path):
         traced_script_module = torch.jit.script(model)
         traced_script_module.save(path)
 
+def export_as_jit(network, path, name='policy'):
+    os.makedirs(path, exist_ok=True)
+    path = os.path.join(path, name + '.pt')
+    model = copy.deepcopy(network).to('cpu')
+    traced_script_module = torch.jit.script(model)
+    traced_script_module.save(path)
 
 class PolicyExporterLSTM(torch.nn.Module):
     def __init__(self, actor_critic):

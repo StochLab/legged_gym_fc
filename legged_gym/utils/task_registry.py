@@ -36,9 +36,13 @@ import numpy as np
 
 from rsl_rl.env import VecEnv
 from rsl_rl.runners import OnPolicyRunner
+from rsl_rl_velocity_2.runners import OnPolicyRunner as OnPolicyRunnerVelocity_2
+from rsl_rl_tanh.runners import OnPolicyRunner as OnPolicyRunnerTanh
 
 from legged_gym import LEGGED_GYM_ROOT_DIR, LEGGED_GYM_ENVS_DIR
-from .helpers import get_args, update_cfg_from_args, class_to_dict, get_load_path, set_seed, parse_sim_params
+from .helpers import (get_args, update_cfg_from_args, class_to_dict,
+                      get_load_path, set_seed, parse_sim_params,
+                      get_load_path_velocity_model)
 from legged_gym.envs.base.legged_robot_config import LeggedRobotCfg, LeggedRobotCfgPPO
 
 class TaskRegistry():
@@ -146,15 +150,34 @@ class TaskRegistry():
         
         train_cfg_dict = class_to_dict(train_cfg)
         # print("train_cfg_dict",train_cfg_dict)
-        runner = OnPolicyRunner(env, train_cfg_dict, log_dir, device=args.rl_device)
+
+        if args.rl_algo =='velocity_2':
+            print("PPO Velocity_2")
+            runner = OnPolicyRunnerVelocity_2(env, train_cfg_dict, log_dir, device=args.rl_device,
+                                              init_wandb=False)
+        elif args.rl_algo == 'tanh':
+            print("PPO tanh")
+            runner = OnPolicyRunnerTanh(env, train_cfg_dict, log_dir, device=args.rl_device,
+                                        init_wandb=False)
+        else:
+            runner = OnPolicyRunner(env, train_cfg_dict, log_dir, device=args.rl_device)
+
         #save resume path before creating a new log_dir
         resume = train_cfg.runner.resume
         if resume:
             #print("This line should not be printed")
             # load previously trained model
-            resume_path = get_load_path(log_root, load_run=train_cfg.runner.load_run, checkpoint=train_cfg.runner.checkpoint)
+            resume_path = get_load_path(log_root, load_run=train_cfg.runner.load_run,
+                                        checkpoint=train_cfg.runner.checkpoint)
             print(f"Loading model from: {resume_path}")
             runner.load(resume_path)
+            if args.rl_algo == 'velocity_2':
+                resume_path_velocity_model = get_load_path_velocity_model(log_root,
+                                                                          load_run=train_cfg.runner.load_run,
+                                                                          checkpoint=train_cfg.runner.checkpoint)
+                print(f"Loading Velocity model from: {resume_path_velocity_model}")
+                runner.load_velocity_model(resume_path_velocity_model)
+
         return runner, train_cfg
 
 # make global task registry

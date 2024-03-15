@@ -1,0 +1,261 @@
+ 1) go1_wrench1
+    Observations: 56 (actual foot contacts in the observation)
+    Actions: 6 (f_x, f_y, f_z, tau_x, tau_y, tau_z)
+
+    exp1:
+        body height - 0.35, swing height - 0.12, step frequency: 2.5
+        actual lin vel in the observation
+        flat terrain
+
+    exp2:
+        body height - 0.35, swing height - 0.12, step frequency: 2.5
+        actual lin vel in the observation
+        on slopes
+
+    exp3:
+        body height - 0.35, swing height - 0.12, step frequency: 2.5
+        zero lin vel in the observation
+        flat terrain
+
+    exp4:
+        body height - 0.35, swing height - 0.12, step frequency: 2.5
+        zero lin vel in the observation
+        slopes
+
+    exp5:
+        body height - 0.33, swing height - 0.12, step frequency: 2.5
+        zero lin vel in the observation
+        flat terrain
+
+    exp6:
+        body height - 0.32, swing height - 0.12, step frequency: 2.5
+        actual lin vel in the observation
+        On slopes
+        Actual foot contact is considered from stance-to-swing
+        or swing-to-stance switch after 60% of phase completion.
+
+    exp7:
+        body height - 0.35, swing height - 0.12, step frequency: 2.5
+        actual lin vel in the observation
+        On slopes
+        * Actual foot contact is considered from stance-to-swing
+          or swing-to-stance switch after 60% of phase completion.
+
+    exp8:
+        body height - 0.33, swing height - 0.12, step frequency: 2.5
+        actual lin vel in the observation
+        On slopes
+        * Actual foot contact is considered from stance-to-swing
+          or swing-to-stance switch after 60% of phase completion.
+
+    exp9:
+        body height - 0.33, swing height - 0.12, step frequency: 2.0
+        swing duration: 60% of total time (All the 4 legs will be in stance
+        phase for some 20% of time, thus increases stability on slopes ?)
+        * Actual lin vel in the observation
+        * On slopes
+        * Actual foot contact is considered from stance-to-swing
+          or swing-to-stance switch after 60% of phase completion.
+
+    exp10:
+        same as exp9, but on flat terrain
+
+    hw1: with actual linvel + 100N default z-force + flat terrain
+         + 0.30 walking height + 0.10 swing height + 2.5 step frequency
+    hw2: with zero linvel + 100N default z-force + flat terrain
+         + 0.30 walking height + 0.10 swing height + 2.5 step frequency
+
+
+ 2) go1_wrench2 (cloned from go1_wrench1)
+    observations: 52 (no foot contacts)
+    Actions: 6 (f_x, f_y, f_z, tau_x, tau_y, tau_z)
+    swing height: 0.12
+    walking height: 0.33
+
+    exp1: with linvel in the observation + 100 N default z-force + flat terrain
+    exp2: with zero linvel + 100 N default z-force + flat terrain
+    exp3: with zero linvel + 100 N default z-force + slopes
+    exp4: with linvel + 100 N default z-force + slopes
+
+    exp5: trained for gazebo (init dofs: [0.5, 1.5] * default_dof_pos)
+          noise added to observations
+          walking height: 0.35
+
+    exp6: trained for gazebo (init dofs: [0.5, 1.5] * default_dof_pos)
+          noise added to observations
+          walking height: 0.35
+          all the phase values are multiplied by zero.
+
+    exp7: same as exp6, except the default joint angles are changed
+    exp8: same as exp7, but with zero dof velocities
+    exp9: same as exp8, but with zero dof pos
+
+    exp10: with zero linvel + 100 N default z-force + flat terrain
+           (with randomised initial dof angles)
+
+    exp11: with zero linvel + 100 N default z-force + flat terrain
+           + zero phase + (with randomised initial dof angles)
+
+    Things to keep in mind for hardware deployment (gazebo):
+        1. Check phase values (add some noise while training)
+        2. check dof pos values
+        3. check foot contacts
+
+
+ 3) go1_wrench3 (go1_wrench1 + velocity estimator)
+    Observations: 56 (actual foot contacts in the observation)
+    Actions: 6 (f_x, f_y, f_z, tau_x, tau_y, tau_z)
+    run with --rl_algo=velocity_2 flag, uses rsl_rl_velocity_2
+
+    exp1: vel estimator and the actor-critic are trained together.
+          estimated velocity is a part of the observation.
+          history size = 30
+          swing height: 0.12
+          walking height: 0.35
+
+    exp2: same as exp1 with some changes in the rewards
+    exp3: history size = 30
+          swing height: 0.12
+          walking height: 0.33
+          randomized intial dof positions
+
+    hw1: history size = 30
+         swing height: 0.10
+         walking height: 0.30
+
+    hw2: history size = 30
+         swing height: 0.10
+         walking height: 0.30
+         all contacts set to zero (no contact info)
+
+
+ 4) go1_grf1
+    observations: 56 (des foot contacts in the obs)
+    actions: 12 (x, y and z forces for fl, fr, bl, br respectively)
+    walking height: 0.33
+    swing height: 0.12
+
+    exp1: with lin vel + No default z-forces on any leg + no zeroing swing forces
+    exp2: with lin vel + default z-forces + zeroing swing forces
+
+
+ 5) go1_wrench4 (for walking on slopes)
+    Observations: 56 (actual foot contacts in the observation)
+    actions: 18 (com wrench + perturbation on joint angles)
+    swing height: 0.12
+    walking height: 0.33
+
+    exp1: with lin vel + zero delta (no perturbation)
+    exp2: with lin vel + delta of 0.5 radians for each angle
+    exp3: with lin vel + zero delta + slopes
+          + actual foot contact is considered from stance-to-swing
+            or swing-to-stance switch after 60% of phase completion.
+
+ 6) go1_wrench5 (Cloned from go1_wrench1)
+    Observations: 56 (actual foot contacts in the observation)
+    actions: 18 (com wrench + desired joint angles)
+    swing height: 0.12
+    walking height: 0.33
+    reward to follow the libtraj joint angles
+
+
+ 7) go1_wrench6:
+
+    exp1: 0.35 walking height, 0.12 swing height, 2.5 step freq
+       zero linvel in the observation
+    exp2: 0.35 walking height, 0.12 swing height, 2.5 step freq
+       actual linvel in the observation
+
+ 8) go1_wrench7 (with velocity estimator)
+      0.35 walking height, 0.12 swing height, 2.5 step freq, 1.0 stance_pc_factor
+
+      exp1: observation includes estimated lin vel
+      exp2: observation includes actual lin vel
+      exp3: observation actual lin vel with 2.0 frequency and 1.2 stance_pc_factor
+
+      hardware deployment: foot contacts seems to be a problem(?) Robot has rarely seen
+      when all the four legs are in contact and don't know what to do. Hence, decrease
+      the step frequency and increase the stance duration, so that robot gets to see
+      the states when all 4 legs are in contact.
+      Make the final action dependent only on the observation, not on desired contacts
+      or else, include des contacts states in the observation ---> go1_wrench8
+
+  9) go1_wrench8 (with velocity estimator)
+      exp3:
+           * 0.35 walking height, 0.12 swing height, 2.5 step freq, 1.0 stance_pc_factor
+           * with actual linvel in the observation, distribution of forces depends on the
+             desired foot contacts from libtraj.
+           * desired foot contacts is added in the observation (in the end).
+      exp4:
+           * 0.35 walking height, 0.12 swing height, 2.0 step freq, 1.2 stance_pc_factor
+           * with actual linvel in the observation, distribution of forces depends on the
+             desired foot contacts from libtraj.
+           * desired foot contacts is added in the observation (in the end).
+
+      hardware deployment:
+      foot contacts on hardware still seems to be a problem(?)
+      Remove actual foot contacts from observation and use only the last desired contact
+      states. Actual foot contact can still be used to make the libtraj closed-loop.
+
+  10) go1_wrench9 (with velocity estimator)
+      exp1:
+           * 0.35 walking height, 0.12 swing height, 2.0 step freq, 1.2 stance_pc_factor
+           * with actual linvel in the observation, distribution of forces depends on the
+             desired foot contacts from libtraj.
+           * desired foot contacts is added in the observation (in the end).
+      exp2:
+           * 0.35 walking height, 0.12 swing height, 2.5 step freq, 1.0 stance_pc_factor
+           * with actual linvel in the observation, distribution of forces depends on the
+             desired foot contacts from libtraj.
+           * desired foot contacts is added in the observation (in the end).
+      exp3:
+           * 0.35 walking height, 0.12 swing height, 2.0 step freq, 1.2 stance_pc_factor
+           * with actual linvel in the observation, distribution of forces depends on the
+             desired foot contacts from libtraj.
+           * desired foot contacts is added in the observation (in the end).
+           * Libtraj is fully open-loop. Actual foot contacts doesn't affect the gait cycle.
+      exp4:
+           * 0.35 walking height, 0.12 swing height, 2.0 step freq, 1.2 stance_pc_factor
+           * with actual linvel in the observation, distribution of forces depends on the
+             desired foot contacts from libtraj.
+           * desired foot contacts is added in the observation (in the end).
+           * Libtraj is partially closed-loop. Early stance will make the libtraj switch
+             that leg to stance.
+      exp5:
+           * same as exp4, except that default z-force of 100N is not added to the
+             policy wrench.
+      exp6:
+           * exp5, with pd-scale of 0.25 on stance leg.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

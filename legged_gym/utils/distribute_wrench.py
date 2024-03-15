@@ -34,8 +34,8 @@ def get_optimal_foot_forces(foot_pos, foot_contacts, desired_dynamics, mu=0.8):
             W[3*i+2] = 1e3
     '''
 
-    W = np.diag(W)
-    S = 1e8 * np.diag(np.ones(6))
+    W = np.diag(W)  # 1e3 * np.diag(W)
+    S = 1e8 * np.diag(np.ones(6)) # 1e4 * np.diag(np.ones(6))
     P = 2 * (A_dyna.T @ S @ A_dyna + W)
     c = 2 * (-A_dyna.T @ S @ desired_dynamics).ravel()
     h = np.zeros(16)
@@ -56,7 +56,10 @@ def get_optimal_foot_forces(foot_pos, foot_contacts, desired_dynamics, mu=0.8):
                    np.hstack([friction_cone_zero, friction_cone_zero,
                               friction_cone_zero, friction_cone])])
 
-    res = qpSWIFT.run(c, h, P, G)
+    options = {'MAXITER': 40, 'RELTOL':1e-4,
+               'ABSTOL':1e-4, 'VERBOSE': 0, 'OUTPUT': 3}
+
+    res = qpSWIFT.run(c, h, P, G, opts=options)
 
     # A = A_dyna
     # b = desired_dynamics
@@ -86,6 +89,10 @@ def distribute_wrench(foot_pos: torch.Tensor, foot_contacts: torch.Tensor,
     foot_contact_np = foot_contacts.cpu().numpy()
     wrench_np = wrench.cpu().numpy()
 
+    if (np.any(np.isnan(foot_pos_np)) or
+        np.any(np.isnan(foot_contact_np)) or np.any(np.isnan(wrench_np))):
+        print('Nans in inputs to QP!')
+
     for i in range(batch_size):
         grf = get_optimal_foot_forces(foot_pos_np[i, ...].T,
                                       foot_contact_np[i, ...],
@@ -95,11 +102,12 @@ def distribute_wrench(foot_pos: torch.Tensor, foot_contacts: torch.Tensor,
     GRFs = np.vstack(GRFs)
 
     if np.any(np.isnan(GRFs)):
-        print('Nans in QP')
+        print('Nans in QP!')
 
     GRFs = torch.tensor(GRFs).to(device)
 
     if torch.any(torch.isnan(GRFs)):
-        print('Nans in tensor forces in QP')
+        print('Nans in tensor forces in QP!')
 
     return GRFs
+

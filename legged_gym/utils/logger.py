@@ -58,9 +58,58 @@ class Logger:
         self.state_log.clear()
         self.rew_log.clear()
 
-    def plot_states(self):
-        self.plot_process = Process(target=self._plot)
+    # def plot_states(self):
+    #     self.plot_process = Process(target=self._plot)
+    #     self.plot_process.start()
+
+    def plot_states(self, plot_type="default"):
+        if (plot_type == 'default'):
+            self.plot_process = Process(target=self._plot)
+        else:
+            self.plot_process = Process(target=self._plot_custom)
         self.plot_process.start()
+
+    def _plot_custom(self):
+        log = self.state_log
+        list_keys = list(log.keys())
+        nb_rows, nb_cols = self.plot_dim(len(list_keys))
+        fig, axs = plt.subplots(nb_rows, nb_cols)
+        for key, value in self.state_log.items():
+            time = np.linspace(0, len(value) * self.dt, len(value))
+            break
+        i = 0
+        key_to_rowcol = {}
+        row = 0
+        col = 0
+        while (row < nb_rows):
+            col = 0
+            while (col < nb_cols):
+                if ('actual' not in list_keys[i]):
+                    axs[row, col].plot(time, log[list_keys[i]])
+                    axs[row, col].set(xlabel='time [s]', ylabel=list_keys[i], title=list_keys[i])
+                    # axs[row,col].legend()
+                    key_to_rowcol[list_keys[i]] = (row, col)
+                    # print("If",list_keys[i],row,col)
+                else:
+                    (n_row, n_col) = key_to_rowcol[list_keys[i][:-7]]
+                    axs[n_row, n_col].plot(time, log[list_keys[i]])
+                    axs[n_row, n_col].set(xlabel='time [s]', ylabel=list_keys[i], title=list_keys[i])
+                    col -= 1
+                    # print("Else",list_keys[i],row,col)
+                col += 1
+                i += 1
+                if (i == len(list_keys)):
+                    break
+            row += 1
+            if (i == len(list_keys)):
+                break
+        plt.show()
+        plt.tight_layout()
+
+    def plot_dim(self, size):
+        for i in range(1, size + 1):
+            if (i * i >= size):
+                return i - 1, i
     
     def plot_new_states(self):
         self.plot_process = Process(target=self._new_plot)
