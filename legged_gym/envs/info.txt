@@ -129,17 +129,7 @@
          all contacts set to zero (no contact info)
 
 
- 4) go1_grf1
-    observations: 56 (des foot contacts in the obs)
-    actions: 12 (x, y and z forces for fl, fr, bl, br respectively)
-    walking height: 0.33
-    swing height: 0.12
-
-    exp1: with lin vel + No default z-forces on any leg + no zeroing swing forces
-    exp2: with lin vel + default z-forces + zeroing swing forces
-
-
- 5) go1_wrench4 (for walking on slopes)
+ 4) go1_wrench4 (for walking on slopes)
     Observations: 56 (actual foot contacts in the observation)
     actions: 18 (com wrench + perturbation on joint angles)
     swing height: 0.12
@@ -151,7 +141,7 @@
           + actual foot contact is considered from stance-to-swing
             or swing-to-stance switch after 60% of phase completion.
 
- 6) go1_wrench5 (Cloned from go1_wrench1)
+ 5) go1_wrench5 (Cloned from go1_wrench1)
     Observations: 56 (actual foot contacts in the observation)
     actions: 18 (com wrench + desired joint angles)
     swing height: 0.12
@@ -159,14 +149,14 @@
     reward to follow the libtraj joint angles
 
 
- 7) go1_wrench6:
+ 6) go1_wrench6:
 
     exp1: 0.35 walking height, 0.12 swing height, 2.5 step freq
        zero linvel in the observation
     exp2: 0.35 walking height, 0.12 swing height, 2.5 step freq
        actual linvel in the observation
 
- 8) go1_wrench7 (with velocity estimator)
+ 7) go1_wrench7 (with velocity estimator)
       0.35 walking height, 0.12 swing height, 2.5 step freq, 1.0 stance_pc_factor
 
       exp1: observation includes estimated lin vel
@@ -180,7 +170,7 @@
       Make the final action dependent only on the observation, not on desired contacts
       or else, include des contacts states in the observation ---> go1_wrench8
 
-  9) go1_wrench8 (with velocity estimator)
+  8) go1_wrench8 (with velocity estimator)
       exp3:
            * 0.35 walking height, 0.12 swing height, 2.5 step freq, 1.0 stance_pc_factor
            * with actual linvel in the observation, distribution of forces depends on the
@@ -197,7 +187,7 @@
       Remove actual foot contacts from observation and use only the last desired contact
       states. Actual foot contact can still be used to make the libtraj closed-loop.
 
-  10) go1_wrench9 (with velocity estimator)
+  9) go1_wrench9 (with velocity estimator)
       exp1:
            * 0.35 walking height, 0.12 swing height, 2.0 step freq, 1.2 stance_pc_factor
            * with actual linvel in the observation, distribution of forces depends on the
@@ -227,6 +217,31 @@
       exp6:
            * exp5, with pd-scale of 0.25 on stance leg.
 
+
+1) go1_grf1
+    observations: 56 (des foot contacts in the obs)
+    actions: 12 (x, y and z forces for fl, fr, bl, br respectively)
+    walking height: 0.33
+    swing height: 0.12
+
+    exp1: with lin vel + No default z-forces on any leg + no zeroing swing forces
+    exp2: with lin vel + default z-forces + zeroing swing forces
+
+2) go1_grfs2 (no dof velocities in observation frame)
+      * exp1: basic setup, flat ground (libtraj params: 0.35, 0.12, 2.5, 1.2)
+      * exp2: slopes with libtraj params: 0.32, 0.12, 2.0, 1.2
+              (0.32 seems to be a better walking height than 0.35. More stable
+              while walking on slopes (80% smooth slopes + 20% rough slopes))
+      * exp3: All smooth slopes with libtraj params: 0.32, 0.12, 2.0, 1.2
+
+      exp2, exp3 is good, but leg is slipping on slopes. Penalise leg slipping more
+      and add friction cone constraint rewards.
+
+3) go1_grf3 (cloned from go1_grf2)
+      * Env with tray-box added on top of torso with a provision to add movable balls
+
+      exp1: No balls, dof vel in the observation, flat ground
+            (libtraj params: 0.32, 0.12, 2.0, 1.2)
 
 
 
